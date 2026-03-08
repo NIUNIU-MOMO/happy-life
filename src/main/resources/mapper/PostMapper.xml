@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.happylife.mapper.PostMapper">
+
+    <insert id="insertWithPoint" useGeneratedKeys="true" keyProperty="post.id">
+        INSERT INTO t_post (user_id, title, description, images, video_url,
+                            location_name, location_point, latitude, longitude,
+                            post_date, tags, view_count, like_count)
+        VALUES (#{post.userId}, #{post.title}, #{post.description},
+                #{post.images, typeHandler=com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler}::jsonb,
+                #{post.videoUrl},
+                #{post.locationName},
+                ST_SetSRID(ST_MakePoint(#{post.longitude}, #{post.latitude}), 4326)::geography,
+                #{post.latitude}, #{post.longitude},
+                #{post.postDate},
+                #{post.tags, typeHandler=com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler}::jsonb,
+                0, 0)
+    </insert>
+
+    <select id="selectByMapBounds" resultType="com.happylife.entity.Post">
+        SELECT id, user_id, title, description, images, video_url,
+               location_name, latitude, longitude, post_date, tags,
+               view_count, like_count, create_time, update_time, is_deleted
+        FROM t_post
+        WHERE is_deleted = false
+        AND ST_Contains(
+            ST_MakeEnvelope(#{minLng}, #{minLat}, #{maxLng}, #{maxLat}, 4326)::geography::geometry,
+            location_point::geometry
+        )
+        ORDER BY post_date DESC
+        LIMIT 100
+    </select>
+
+</mapper>

@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/happy_life
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+wechat:
+  app-id: wx622e7fcada414776
+  app-secret: YOUR_SECRET
+
+jwt:
+  secret: happy-life-jwt-secret-key-2026-very-long-string-for-security
+  expiration: 604800000
+
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: YOUR_AK
+    access-key-secret: YOUR_SK
+    bucket-name: happy-life-media
